@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Indicadores de las Prioridades del Área</title>
+<style>
+/* Brand from the monthly presentation: navy band, gold rules, cream ground, Georgia headings. Layout: tabs → summary → 2-column grid, one priority per block. */
+:root{
+  --navy:#1B365D; --gold:#C9A24D; --cream:#F5F1E8; --sand:#D9D4C7; --ink:#1F2937; --muted:#6B7280; --white:#FFFFFF;
+  --good:#1D7A4C; --good-soft:#E3F1E8; --bad:#B42318; --bad-soft:#F8E4E1; --flat-soft:#ECEAE4;
+  --f-display:Georgia, "Times New Roman", serif;
+  --f-body:Calibri, Carlito, "Segoe UI", Arial, sans-serif;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.4}
+.band{background:var(--navy);color:var(--white);border-bottom:5px solid var(--gold)}
+.band-in{max-width:1240px;margin:0 auto;padding:18px 20px;display:flex;flex-wrap:wrap;gap:8px 24px;align-items:flex-end;justify-content:space-between}
+h1{font-family:var(--f-display);font-weight:700;font-size:24px;letter-spacing:.02em;text-transform:uppercase;margin:0;text-wrap:balance}
+.band p{margin:4px 0 0;color:var(--sand);font-size:14px}
+.stamp{color:var(--sand);font-size:13px}
+#view{display:flex;flex-direction:column;gap:18px;min-width:0}
+.wrap{max-width:1240px;margin:0 auto;padding:18px 20px 40px;display:flex;flex-direction:column;gap:18px}
+
+nav.tabs{display:flex;gap:2px;overflow-x:auto;border-bottom:2px solid var(--sand);scrollbar-width:thin}
+.tab{font:inherit;border:0;background:transparent;color:var(--navy);padding:9px 12px 7px;font-weight:700;border-bottom:4px solid transparent;margin-bottom:-2px;white-space:nowrap;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px}
+.tab small{font-weight:400;font-size:11px;color:var(--muted)}
+.tab[aria-selected="true"]{border-bottom-color:var(--gold)}
+.tab:disabled{color:#a7a399;cursor:default}
+.tab.cmp{margin-left:auto;background:var(--navy);color:var(--white);border-radius:6px 6px 0 0;padding:9px 16px}
+.tab.cmp[aria-selected="true"]{border-bottom-color:var(--gold)}
+.tab:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+.summary{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;background:var(--white);border-left:5px solid var(--gold);padding:12px 16px;box-shadow:0 1px 2px rgba(27,54,93,.08)}
+.summary strong{font-family:var(--f-display);color:var(--navy);font-size:18px}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:999px;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.chip.up{background:var(--good-soft);color:var(--good)}
+.chip.down{background:var(--bad-soft);color:var(--bad)}
+.chip.flat{background:var(--flat-soft);color:var(--muted)}
+.chip.warn{background:var(--bad-soft);color:var(--bad)}
+.muted{color:var(--muted)}
+
+.prio-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+@media (max-width:900px){.prio-grid{grid-template-columns:1fr}}
+.prio{display:flex;flex-direction:column;gap:10px;min-width:0}
+.prio-head{background:var(--navy);color:var(--white);display:flex;align-items:center;gap:12px;padding:10px 14px}
+.prio-head svg{width:34px;height:34px;flex:none}
+.prio-head h2{font-family:var(--f-display);font-size:17px;margin:0;font-weight:700}
+
+.ind{background:var(--white);border-left:5px solid var(--gold);padding:14px 16px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 16px;box-shadow:0 1px 2px rgba(27,54,93,.08);min-width:0}
+.ind.alert{border-left-color:var(--bad)}
+.ind-num{font-family:var(--f-display);color:var(--gold);font-weight:700;font-size:22px;line-height:1}
+.ind h3{font-family:var(--f-display);color:var(--navy);font-size:16px;margin:0;line-height:1.25;text-wrap:balance}
+.ind-body{grid-column:1 / -1;display:grid;grid-template-columns:120px minmax(0,1fr);gap:14px;align-items:center;margin-top:6px}
+@media (max-width:460px){.ind-body{grid-template-columns:1fr}}
+.kpi{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.donut{width:112px;height:112px}
+.count{font-family:var(--f-display);color:var(--navy);font-size:52px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.kpi .detail{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.chart-box{position:relative;width:100%;min-width:0}
+
+.panel{background:var(--white);border-left:5px solid var(--gold);padding:14px 16px;display:flex;flex-direction:column;gap:10px;min-width:0;box-shadow:0 1px 2px rgba(27,54,93,.08)}
+.panel h2{font-family:var(--f-display);color:var(--navy);font-size:17px;margin:0}
+.panel .note{color:var(--muted);font-size:13px;margin:0}
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:14px}
+th,td{padding:7px 9px;border-bottom:1px solid var(--sand);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left;white-space:normal;min-width:210px}
+thead th{color:var(--navy);font-weight:700;font-size:13px;background:var(--cream)}
+td.na{color:#b4b0a6}
+
+.empty{background:var(--white);border:1px dashed var(--sand);padding:28px;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:12px;align-items:center}
+.btn{font:inherit;font-weight:700;background:var(--navy);color:var(--white);border:0;padding:8px 14px;border-radius:4px;cursor:pointer}
+footer{max-width:1240px;margin:0 auto;padding:0 20px 28px;color:var(--muted);font-size:12px;border-top:4px solid var(--gold);padding-top:10px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+@media (max-width:520px){.band-in,.wrap{padding-left:16px;padding-right:16px}h1{font-size:19px}}
+</style>
+</head>
+<body>
+<header class="band">
+  <div class="band-in">
+    <div>
+      <h1>Indicadores de las Prioridades del Área</h1>
+      <p id="subtitle">Informe mensual</p>
+    </div>
+    <span class="stamp" id="stamp"></span>
+  </div>
+</header>
+<div class="wrap">
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Mes"></nav>
+  <main id="view"><div class="empty">Cargando datos…</div></main>
+</div>
+<footer>Indicadores de las Prioridades del Área · % = real ÷ potencial · pp = puntos porcentuales frente al mes anterior</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+(function(){
+"use strict";
+const DATA_FILE="datos.xlsx";
+const ICONS={"templo": "<svg viewBox=\"0 0 96 96\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" overflow=\"hidden\"><path fill=\"#FFFFFF\" d=\"M57 38 55 32.5 53.582 36.4 48 11 42.418 36.4 41 32.5 39 38 39 45 48 38.25 57 45 57 38Z\"/><path fill=\"#FFFFFF\" d=\"M49.707 61.228 48 59.9 46.31 61.223C42.6649 64.0582 40.5389 68.4221 40.553 73.04L40.553 94 43.689 94 43.689 81 52.289 81 52.289 94 55.489 94 55.489 73.073C55.5066 68.4408 53.3699 64.0636 49.707 61.228ZM48 75C46.3431 75 45 73.6569 45 72 45 70.3431 46.3431 69 48 69 49.6569 69 51 70.3431 51 72 51 73.6569 49.6569 75 48 75Z\"/><path fill=\"#FFFFFF\" d=\"M60 51 48 42 36 51 32 51 32 94 37.556 94 37.556 73.042C37.5398 67.5009 40.0907 62.2647 44.464 58.862L48 56.1 51.552 58.862C55.9501 62.2623 58.5177 67.5138 58.5 73.073L58.5 94 64 94 64 51Z\"/><path fill=\"#FFFFFF\" d=\"M85 30 83 24.5 81.591 28.375 76 2 70.409 28.375 69 24.5 67 30 67 94 85 94ZM78.6 84 73.4 84 73.4 73.355C73.3997 71.4798 74.0078 69.6551 75.133 68.155L76 67 76.867 68.156C77.9922 69.6561 78.6003 71.4808 78.6 73.356ZM78.6 52 73.4 52 73.4 45.355C73.3997 43.4798 74.0078 41.6551 75.133 40.155L76 39 76.867 40.156C77.9922 41.6561 78.6003 43.4808 78.6 45.356Z\"/><path fill=\"#FFFFFF\" d=\"M29 30 27 24.5 25.591 28.375 20 2 14.409 28.375 13 24.5 11 30 11 94 29 94ZM22.6 84 17.4 84 17.4 73.355C17.3997 71.4798 18.0078 69.6551 19.133 68.155L20 67 20.867 68.156C21.9922 69.6561 22.6003 71.4808 22.6 73.356ZM22.6 52 17.4 52 17.4 45.355C17.3997 43.4798 18.0078 41.6551 19.133 40.155L20 39 20.867 40.156C21.9922 41.6561 22.6003 43.4808 22.6 45.356Z\"/></svg>", "sacramental": "<svg version=\"1.1\" viewBox=\"0 0 96 96\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" overflow=\"hidden\"><circle fill=\"#FFFFFF\" cx=\"71\" cy=\"66.5\" r=\"2.5\"/><circle fill=\"#FFFFFF\" cx=\"82\" cy=\"66.5\" r=\"2.5\"/><circle fill=\"#FFFFFF\" cx=\"49\" cy=\"66.5\" r=\"2.5\"/><circle fill=\"#FFFFFF\" cx=\"60\" cy=\"66.5\" r=\"2.5\"/><circle fill=\"#FFFFFF\" cx=\"27\" cy=\"66.5\" r=\"2.5\"/><circle fill=\"#FFFFFF\" cx=\"38\" cy=\"66.5\" r=\"2.5\"/><circle fill=\"#FFFFFF\" cx=\"16\" cy=\"66.5\" r=\"2.5\"/><path fill=\"#FFFFFF\" d=\" M 88.47 79.66 L 86.54 72.38 C 86.4808 72.1742 86.3786 71.9833 86.24 71.82 C 85.5821 71.1344 84.7694 70.6165 83.87 70.31 C 83.2729 70.0854 82.6376 69.9801 82 70 C 81.367 69.9988 80.7383 70.1036 80.14 70.31 C 79.2335 70.6128 78.416 71.135 77.76 71.83 C 77.6354 71.9993 77.5406 72.1887 77.48 72.39 L 76.48 76.11 L 75.48 72.42 C 75.4265 72.214 75.3274 72.0226 75.19 71.86 C 74.5278 71.1748 73.712 70.6572 72.81 70.35 C 72.2349 70.1177 71.6203 69.9989 71 70 C 70.3672 70.0005 69.7388 70.1052 69.14 70.31 C 68.2353 70.6105 67.4205 71.1331 66.77 71.83 C 66.6384 71.9964 66.54 72.1865 66.48 72.39 L 65.5 76 L 64.5 72.38 C 64.4408 72.1742 64.3386 71.9833 64.2 71.82 C 63.5421 71.1344 62.7294 70.6165 61.83 70.31 C 61.2454 70.0905 60.6242 69.9853 60 70 C 59.367 69.9988 58.7383 70.1036 58.14 70.31 C 57.2335 70.6128 56.416 71.135 55.76 71.83 C 55.6354 71.9993 55.5406 72.1887 55.48 72.39 L 54.48 76.11 L 53.48 72.42 C 53.4265 72.214 53.3274 72.0226 53.19 71.86 C 52.5278 71.1748 51.712 70.6572 50.81 70.35 C 50.2349 70.1177 49.6203 69.9989 49 70 C 48.3672 70.0005 47.7388 70.1052 47.14 70.31 C 46.2353 70.6105 45.4205 71.1331 44.77 71.83 C 44.6384 71.9964 44.54 72.1865 44.48 72.39 L 43.5 76 L 42.5 72.38 C 42.4408 72.1742 42.3386 71.9833 42.2 71.82 C 41.5421 71.1344 40.7294 70.6165 39.83 70.31 C 39.2455 70.0905 38.6242 69.9853 38 70 C 37.367 69.9988 36.7383 70.1036 36.14 70.31 C 35.2336 70.6128 34.416 71.135 33.76 71.83 C 33.6354 71.9993 33.5407 72.1887 33.48 72.39 L 32.48 76.11 L 31.48 72.42 C 31.4265 72.214 31.3274 72.0226 31.19 71.86 C 30.5278 71.1748 29.712 70.6572 28.81 70.35 C 28.2349 70.1177 27.6203 69.9989 27 70 C 26.3672 70.0005 25.7388 70.1052 25.14 70.31 C 24.2353 70.6105 23.4205 71.1331 22.77 71.83 C 22.6384 71.9964 22.54 72.1865 22.48 72.39 L 21.5 76 L 20.5 72.38 C 20.4408 72.1742 20.3386 71.9833 20.2 71.82 C 19.5421 71.1344 18.7294 70.6165 17.83 70.31 C 17.2454 70.0905 16.6242 69.9853 16 70 C 15.367 69.9988 14.7384 70.1036 14.14 70.31 C 13.2336 70.6128 12.416 71.135 11.76 71.83 C 11.6354 71.9993 11.5407 72.1887 11.48 72.39 L 9.55 79.66 C 9.44187 80.2016 9.79325 80.7283 10.3349 80.8364 C 10.8301 80.9353 11.3213 80.6494 11.48 80.17 L 13 74.44 L 13 77.58 L 11.28 84 L 13 84 L 13 92 L 15 92 L 15 84 L 17 84 L 17 92 L 19 92 L 19 84 L 20.72 84 L 19 77.58 L 19 74.37 L 20.53 80.17 C 20.6643 80.7057 21.2074 81.0312 21.7431 80.8969 C 22.1009 80.8072 22.3803 80.5278 22.47 80.17 L 24 74.37 L 24 92 L 26 92 L 26 81 L 28 81 L 28 92 L 30 92 L 30 74.43 L 31.52 80.17 C 31.52 80.7223 31.9677 81.17 32.52 81.17 C 33.0723 81.17 33.52 80.7223 33.52 80.17 L 35 74.43 L 35 77.58 L 33.28 84 L 35 84 L 35 92 L 37 92 L 37 84 L 39 84 L 39 92 L 41 92 L 41 84 L 42.72 84 L 41 77.58 L 41 74.37 L 42.53 80.17 C 42.6643 80.7057 43.2074 81.0312 43.7431 80.8969 C 44.1009 80.8072 44.3803 80.5278 44.47 80.17 L 46 74.37 L 46 92 L 48 92 L 48 81 L 50 81 L 50 92 L 52 92 L 52 74.43 L 53.52 80.17 C 53.52 80.7223 53.9677 81.17 54.52 81.17 C 55.0723 81.17 55.52 80.7223 55.52 80.17 L 57 74.43 L 57 77.58 L 55.28 84 L 57 84 L 57 92 L 59 92 L 59 84 L 61 84 L 61 92 L 63 92 L 63 84 L 64.72 84 L 63 77.58 L 63 74.37 L 64.53 80.17 C 64.6643 80.7057 65.2074 81.0312 65.7431 80.8969 C 66.1009 80.8072 66.3803 80.5278 66.47 80.17 L 68 74.37 L 68 92 L 70 92 L 70 81 L 72 81 L 72 92 L 74 92 L 74 74.43 L 75.52 80.17 C 75.52 80.7223 75.9677 81.17 76.52 81.17 C 77.0723 81.17 77.52 80.7223 77.52 80.17 L 79 74.43 L 79 77.58 L 77.28 84 L 79 84 L 79 92 L 81 92 L 81 84 L 83 84 L 83 92 L 85 92 L 85 84 L 86.72 84 L 85 77.58 L 85 74.37 L 86.53 80.17 C 86.6507 80.6192 87.0651 80.9259 87.53 80.91 C 88.0821 80.8945 88.517 80.4343 88.5015 79.8822 C 88.4993 79.8072 88.4888 79.7327 88.47 79.66 Z\"/><path fill=\"#FFFFFF\" d=\" M 71 39 C 72.3807 39 73.5 37.8807 73.5 36.5 C 73.5 35.1193 72.3807 34 71 34 C 69.6193 34 68.5 35.1193 68.5 36.5 C 68.5 37.8807 69.6193 39 71 39 Z\"/><path fill=\"#FFFFFF\" d=\" M 49 39 C 50.3807 39 51.5 37.8807 51.5 36.5 C 51.5 35.1193 50.3807 34 49 34 C 47.6193 34 46.5 35.1193 46.5 36.5 C 46.5 37.8807 47.6193 39 49 39 Z\"/><path fill=\"#FFFFFF\" d=\" M 60 39 C 61.3807 39 62.5 37.8807 62.5 36.5 C 62.5 35.1193 61.3807 34 60 34 C 58.6193 34 57.5 35.1193 57.5 36.5 C 57.5 37.8807 58.6193 39 60 39 Z\"/><path fill=\"#FFFFFF\" d=\" M 27 39 C 28.3807 39 29.5 37.8807 29.5 36.5 C 29.5 35.1193 28.3807 34 27 34 C 25.6193 34 24.5 35.1193 24.5 36.5 C 24.5 37.8807 25.6193 39 27 39 Z\"/><path fill=\"#FFFFFF\" d=\" M 38 39 C 39.3807 39 40.5 37.8807 40.5 36.5 C 40.5 35.1193 39.3807 34 38 34 C 36.6193 34 35.5 35.1193 35.5 36.5 C 35.5 37.8807 36.6193 39 38 39 Z\"/><path fill=\"#FFFFFF\" d=\" M 77.45 49.66 L 75.52 42.38 C 75.4665 42.174 75.3674 41.9826 75.23 41.82 C 74.5678 41.1348 73.752 40.6172 72.85 40.31 C 72.2597 40.0863 71.631 39.9809 71 40 C 70.3672 40.0005 69.7388 40.1052 69.14 40.31 C 68.2353 40.6105 67.4205 41.1331 66.77 41.83 C 66.6384 41.9964 66.54 42.1865 66.48 42.39 L 65.5 46 L 64.5 42.38 C 64.4408 42.1742 64.3386 41.9833 64.2 41.82 C 63.5421 41.1343 62.7294 40.6165 61.83 40.31 C 61.2454 40.0905 60.6242 39.9853 60 40 C 59.367 39.9988 58.7383 40.1036 58.14 40.31 C 57.2335 40.6128 56.416 41.135 55.76 41.83 C 55.6354 41.9993 55.5406 42.1887 55.48 42.39 L 54.48 46.11 L 53.48 42.42 C 53.4265 42.214 53.3274 42.0226 53.19 41.86 C 52.5278 41.1748 51.712 40.6572 50.81 40.35 C 50.2349 40.1177 49.6203 39.9989 49 40 C 48.3672 40.0005 47.7388 40.1052 47.14 40.31 C 46.2353 40.6105 45.4205 41.1331 44.77 41.83 C 44.6384 41.9964 44.54 42.1865 44.48 42.39 L 43.5 46 L 42.5 42.38 C 42.4408 42.1742 42.3386 41.9833 42.2 41.82 C 41.5421 41.1343 40.7294 40.6165 39.83 40.31 C 39.2455 40.0905 38.6242 39.9853 38 40 C 37.367 39.9988 36.7383 40.1036 36.14 40.31 C 35.2336 40.6128 34.416 41.135 33.76 41.83 C 33.6354 41.9993 33.5407 42.1887 33.48 42.39 L 32.48 46.11 L 31.48 42.42 C 31.4265 42.214 31.3274 42.0226 31.19 41.86 C 30.5278 41.1748 29.712 40.6572 28.81 40.35 C 28.2349 40.1177 27.6203 39.9989 27 40 C 26.3672 40.0005 25.7388 40.1052 25.14 40.31 C 24.2353 40.6105 23.4205 41.1331 22.77 41.83 C 22.6384 41.9964 22.54 42.1865 22.48 42.39 L 20.54 49.7 C 20.4003 50.2328 20.7177 50.7783 21.25 50.92 L 21.51 50.92 C 21.9749 50.9359 22.3893 50.6292 22.51 50.18 L 24 44.37 L 24 62 L 26 62 L 26 51 L 28 51 L 28 62 L 30 62 L 30 44.43 L 31.52 50.17 C 31.52 50.7223 31.9677 51.17 32.52 51.17 C 33.0723 51.17 33.52 50.7223 33.52 50.17 L 35 44.43 L 35 47.58 L 33.28 54 L 35 54 L 35 62 L 37 62 L 37 54 L 39 54 L 39 62 L 41 62 L 41 54 L 42.72 54 L 41 47.58 L 41 44.37 L 42.53 50.17 C 42.6643 50.7057 43.2074 51.0312 43.7431 50.8969 C 44.1009 50.8072 44.3803 50.5278 44.47 50.17 L 46 44.37 L 46 62 L 48 62 L 48 51 L 50 51 L 50 62 L 52 62 L 52 44.43 L 53.52 50.17 C 53.52 50.7223 53.9677 51.17 54.52 51.17 C 55.0723 51.17 55.52 50.7223 55.52 50.17 L 57 44.43 L 57 47.58 L 55.28 54 L 57 54 L 57 62 L 59 62 L 59 54 L 61 54 L 61 62 L 63 62 L 63 54 L 64.72 54 L 63 47.58 L 63 44.37 L 64.53 50.17 C 64.6643 50.7057 65.2074 51.0312 65.7431 50.8969 C 66.1009 50.8072 66.3803 50.5278 66.47 50.17 L 68 44.37 L 68 62 L 70 62 L 70 51 L 72 51 L 72 62 L 74 62 L 74 44.43 L 75.52 50.17 C 75.6407 50.6192 76.0551 50.9259 76.52 50.91 C 76.6064 50.9198 76.6936 50.9198 76.78 50.91 C 77.3091 50.7518 77.6098 50.1946 77.4516 49.6655 C 77.4511 49.6636 77.4506 49.6618 77.45 49.66 Z\"/><path fill=\"#FFFFFF\" d=\" M 49 9 C 50.3807 9 51.5 7.88071 51.5 6.5 C 51.5 5.11929 50.3807 4 49 4 C 47.6193 4 46.5 5.11929 46.5 6.5 C 46.5 7.88071 47.6193 9 49 9 Z\"/><path fill=\"#FFFFFF\" d=\" M 60 9 C 61.3807 9 62.5 7.88071 62.5 6.5 C 62.5 5.11929 61.3807 4 60 4 C 58.6193 4 57.5 5.11929 57.5 6.5 C 57.5 7.88071 58.6193 9 60 9 Z\"/><path fill=\"#FFFFFF\" d=\" M 38 9 C 39.3807 9 40.5 7.88071 40.5 6.5 C 40.5 5.11929 39.3807 4 38 4 C 36.6193 4 35.5 5.11929 35.5 6.5 C 35.5 7.88071 36.6193 9 38 9 Z\"/><path fill=\"#FFFFFF\" d=\" M 66.47 19.66 L 64.54 12.38 C 64.4808 12.1742 64.3786 11.9833 64.24 11.82 C 63.5821 11.1344 62.7694 10.6165 61.87 10.31 C 61.2729 10.0854 60.6376 9.98012 60 10 C 59.367 9.99879 58.7383 10.1036 58.14 10.31 C 57.2336 10.6128 56.416 11.135 55.76 11.83 C 55.6354 11.9993 55.5407 12.1887 55.48 12.39 L 54.48 16.11 L 53.48 12.42 C 53.4265 12.214 53.3274 12.0226 53.19 11.86 C 52.5278 11.1748 51.712 10.6572 50.81 10.35 C 50.2349 10.1177 49.6203 9.99887 49 10 C 48.3672 10.0005 47.7388 10.1052 47.14 10.31 C 46.2353 10.6105 45.4205 11.1331 44.77 11.83 C 44.6384 11.9964 44.54 12.1865 44.48 12.39 L 43.5 16 L 42.5 12.38 C 42.4408 12.1742 42.3386 11.9833 42.2 11.82 C 41.5421 11.1344 40.7294 10.6165 39.83 10.31 C 39.2455 10.0905 38.6242 9.98531 38 10 C 37.367 9.99879 36.7383 10.1036 36.14 10.31 C 35.2336 10.6128 34.416 11.135 33.76 11.83 C 33.6354 11.9993 33.5407 12.1887 33.48 12.39 L 31.54 19.7 C 31.4003 20.2328 31.7177 20.7783 32.25 20.92 C 32.3364 20.9298 32.4236 20.9298 32.51 20.92 C 32.9749 20.9359 33.3893 20.6292 33.51 20.18 L 35 14.43 L 35 17.58 L 33.28 24 L 35 24 L 35 32 L 37 32 L 37 24 L 39 24 L 39 32 L 41 32 L 41 24 L 42.72 24 L 41 17.58 L 41 14.37 L 42.53 20.17 C 42.6643 20.7057 43.2074 21.0312 43.7431 20.8969 C 44.1009 20.8072 44.3803 20.5278 44.47 20.17 L 46 14.37 L 46 32 L 48 32 L 48 21 L 50 21 L 50 32 L 52 32 L 52 14.43 L 53.52 20.17 C 53.52 20.7223 53.9677 21.17 54.52 21.17 C 55.0723 21.17 55.52 20.7223 55.52 20.17 L 57 14.43 L 57 17.58 L 55.28 24 L 57 24 L 57 32 L 59 32 L 59 24 L 61 24 L 61 32 L 63 32 L 63 24 L 64.72 24 L 63 17.58 L 63 14.37 L 64.53 20.17 C 64.6507 20.6192 65.0651 20.9259 65.53 20.91 L 65.79 20.91 C 66.3206 20.7569 66.6267 20.2026 66.4735 19.6719 C 66.4724 19.668 66.4712 19.664 66.47 19.66 Z\"/></svg>", "ministracion": "<svg version=\"1.1\" viewBox=\"0 0 96 96\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" overflow=\"hidden\"><path fill=\"#FFFFFF\" d=\" M 44.9 72.4 C 44.4 72.4 43.8 72.3 43.4 71.9 C 42.6 71.2 42.5 69.9 43.2 69.1 L 47.1 64.6 C 47.8 63.8 49.1 63.7 49.9 64.4 C 50.7 65.1 50.8 66.4 50.1 67.2 L 46.2 71.7 C 45.9 72.1 45.4 72.3 44.9 72.4 Z\"/><path fill=\"#FFFFFF\" d=\" M 38.8 70.1 C 38.1 70.2 37.5 70 36.9 69.5 C 35.9 68.6 35.8 67 36.7 66 L 41.3 60.7 C 42.2 59.7 43.8 59.6 44.8 60.5 C 45.8 61.4 45.9 63 45 64 L 40.4 69.3 C 40 69.8 39.4 70.1 38.8 70.1 Z\"/><path fill=\"#FFFFFF\" d=\" M 32.5 66.4 C 31.7 66.5 30.9 66.2 30.3 65.7 C 29.1 64.6 28.9 62.7 30 61.5 L 34.6 56.2 C 35.7 55 37.6 54.8 38.8 55.9 C 40 57 40.2 58.9 39.1 60.1 L 34.5 65.4 C 34 66 33.2 66.4 32.5 66.4 Z\"/><path fill=\"#FFFFFF\" d=\" M 25.2 62.7 C 24.4 62.8 23.6 62.5 23 62 C 21.8 60.9 21.6 59 22.7 57.8 L 28 51.8 C 29.1 50.6 31 50.4 32.2 51.5 C 33.4 52.6 33.6 54.5 32.5 55.7 L 27.2 61.7 C 26.6 62.3 25.9 62.6 25.2 62.7 Z\"/><path fill=\"#FFFFFF\" d=\" M 4.6 40.7 L 12.3 45.4 C 13.2 46 14.5 45.7 15 44.7 L 24.3 29.3 C 24.9 28.4 24.6 27.1 23.6 26.6 L 16 21.9 L 4.6 40.7 Z\"/><path fill=\"#FFFFFF\" d=\" M 69.4 53.8 L 53.3 40 L 52.2 39 L 45.3 46.9 C 44.3 48.1 42.9 48.8 41.3 48.9 C 41.1 48.9 40.9 48.9 40.8 48.9 C 39.3 48.9 37.9 48.4 36.9 47.4 C 34.4 45.2 34.2 41.4 36.3 38.9 L 42.2 32.1 C 37.6 31.5 31.7 33.9 25.6 30.9 L 16.9 45.3 L 23.7 53.2 L 26.3 50.2 C 27.2 49.1 28.6 48.5 30.1 48.5 L 30.1 48.5 C 31.3 48.5 32.5 48.9 33.4 49.7 C 34.5 50.6 35 51.9 35.1 53.3 C 35.6 53.1 36.2 53 36.8 53 C 38 53 39.2 53.4 40.1 54.2 C 41.2 55.2 41.8 56.5 41.8 57.9 C 42.2 57.8 42.7 57.7 43.1 57.7 L 43.1 57.7 C 44.2 57.7 45.2 58.1 46.1 58.8 C 47 59.6 47.5 60.7 47.6 61.9 C 47.9 61.8 48.3 61.7 48.7 61.7 L 48.7 61.7 C 49.7 61.7 50.6 62 51.3 62.7 C 52.1 63.4 52.6 64.4 52.7 65.4 C 52.8 66.5 52.4 67.5 51.7 68.3 L 48.3 72.2 L 49.7 73.3 C 50.4 73.7 51.2 74 52.1 73.9 C 54.3 73.7 55.9 71.8 55.7 69.6 C 55.7 69.6 55.7 69.5 55.7 69.5 C 56 69.6 56.4 69.6 56.7 69.6 C 58.9 69.4 60.5 67.5 60.3 65.3 C 60.3 65.3 60.3 65.2 60.3 65.2 C 60.6 65.3 61 65.3 61.3 65.3 C 63.5 65.1 65.1 63.2 64.9 61 C 64.9 60.8 64.8 60.6 64.8 60.4 C 65.4 60.7 66.1 60.9 66.9 60.8 C 69.1 60.6 70.7 58.7 70.5 56.5 C 70.6 55.4 70.1 54.5 69.4 53.8 Z\"/><path fill=\"#FFFFFF\" d=\" M 91.4 40.7 L 83.7 45.4 C 82.8 46 81.5 45.7 81 44.7 L 71.7 29.3 C 71.1 28.4 71.4 27.1 72.4 26.6 L 80.1 21.9 L 91.4 40.7 Z\"/><path fill=\"#FFFFFF\" d=\" M 70.5 31.3 C 62.2 34.3 56.2 31.4 49.5 30.1 C 49.4 30.1 49 30 49 30 C 47.8 29.9 46.5 30.3 45.6 31.3 L 37.7 40.3 C 36.2 42 36.4 44.5 38.1 45.9 C 39 46.6 40 47 41.1 46.9 C 42.1 46.8 43.1 46.4 43.8 45.5 C 43.8 45.5 52 36.1 52 36.1 L 70.7 52.2 L 70.7 52.2 L 70.7 52.2 C 71.2 52.7 71.4 52.9 71.8 53.5 L 79 45.2 L 70.5 31.3 Z\"/></svg>", "misiones": "<svg version=\"1.1\" viewBox=\"0 0 96 96\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" overflow=\"hidden\"><g><path fill=\"#FFFFFF\" d=\" M 48 10 C 27 10 10 27 10 48 C 10 69 27 86 48 86 C 69 86 86 69 86 48 C 86 27 69 10 48 10 Z M 14 48 C 14 39.1 17.4 31.1 23 25 C 23.9 25.5 24.8 26.3 25 27 L 25 33.3 C 25 33.7 25.1 34.2 25.4 34.5 L 32 43 L 32.5 42.5 C 32.8 42.2 32.9 41.7 32.7 41.3 L 31.5 39.3 C 31 38.5 31.8 37.5 32.7 37.8 C 33 37.9 33.2 38.1 33.3 38.3 L 36.6 44.8 C 37 45.5 37.6 46.1 38.3 46.3 L 42.7 47.8 C 43 47.9 43.2 48.1 43.3 48.3 L 43.6 48.8 C 43.9 49.5 44.6 49.9 45.4 49.9 L 46.6 49.9 C 46.9 49.9 47.2 50.1 47.4 50.3 L 48.7 52.2 C 49 52.6 49.4 52.9 49.9 53 L 52 53.5 C 52.6 53.6 52.9 54.3 52.7 54.8 C 52.7 54.8 51.1 56.4 51.1 58.7 C 51.1 65.3 57.1 67.2 57.1 68.7 C 57.1 72.8 56.5 78.5 56.2 80.7 C 53.6 81.3 50.9 81.7 48.1 81.7 C 29.3 82 14 66.7 14 48 Z M 60.8 79.5 C 63 77.6 66.7 74.4 68 73 C 69.7 71.1 70 68 70 68 C 70 68 77 66.1 77 61 C 77 57.5 70 56 70 56 C 68.8 52.1 62.9 50 58 50 C 56.9 50 53 52 53 52 L 51 51 L 51 48 C 51 47.4 50.6 47 50 47 L 48 47 L 48 44 C 48 43.4 47.6 43 47 43 L 46 43 L 44.9 43.7 C 43.9 44.4 42.5 44 42 42.9 C 42 42.9 41 41.5 41 40.9 C 41 36.6 46 36.9 46 36.9 L 48.2 36.9 C 48.7 36.9 49.1 37.2 49.2 37.7 L 49.8 40.2 C 49.9 40.6 50.3 41 50.8 41 L 51.2 41 C 51.7 41 52.1 40.7 52.2 40.2 L 52.9 36.5 C 53 36.2 53.1 35.9 53.3 35.6 L 56.1 32.1 C 56.7 31.4 57.5 31 58.4 31 L 61 31 C 61.6 31 62 30.6 62 30 L 62 29 L 61.7 28.7 C 61.1 28.1 61.5 27 62.4 27 L 63 27 C 63.6 27 64 27.4 64 28 C 64 28.6 64.4 29 65 29 L 66 29 L 66.6 26.4 C 66.8 25.5 66.4 24.7 65.7 24.2 L 57.2 19.1 C 57.1 19 56.9 19 56.7 19 L 55 19 C 53.9 19 53 19.9 53 21 L 53 22 C 53 22.6 52.6 23 52 23 L 51 23 L 50 22 L 47 22 C 46.4 22 46 21.6 46 21 L 46 18.5 C 46 18.2 46.1 17.9 46.4 17.7 L 52.8 15 L 53.8 16.7 C 54 16.9 54.2 17 54.5 17 L 57 17 C 57.6 17 58 16.6 58 16 L 58 15.5 C 71.9 19.8 82 32.7 82 48 C 82 62.2 73.2 74.4 60.8 79.5 Z\"/><path fill=\"#FFFFFF\" d=\" M 60.3 43.8 L 55.5 42.2 C 55.1 42.1 54.8 42.1 54.4 42.2 L 51 43 C 50.7 43.2 50.6 43.6 51 44 L 55.6 44 C 55.9 44 56.1 44 56.3 44.1 L 59.8 45.5 C 60.4 45.7 61 45.3 61 44.7 C 61 44.3 60.7 43.9 60.3 43.8 Z\"/></g></svg>"};
+const PRIOS=[
+  {id:"templo",name:"Preparar a los miembros para el templo",icon:"templo"},
+  {id:"sacramental",name:"Reunión sacramental",icon:"sacramental"},
+  {id:"ministracion",name:"Ministración y autosuficiencia",icon:"ministracion"},
+  {id:"misiones",name:"Misiones",icon:"misiones"}
+];
+const IND=[
+  {id:"jov",n:"01",name:"Jóvenes con recomendación para el templo",short:"Jóvenes con recomendación",pri:"templo",kind:"pct",match:/j[oó]venes/i},
+  {id:"adu",n:"02",name:"Adultos con recomendación activa",short:"Adultos con recomendación",pri:"templo",kind:"pct",match:/adultos/i},
+  {id:"asi",n:"03",name:"Asistencia a la reunión sacramental",short:"Asistencia sacramental",pri:"sacramental",kind:"pct",match:/asistencia/i},
+  {id:"lid",n:"04",name:"Líderes que han visto la capacitación sobre la reunión sacramental",short:"Líderes capacitados",pri:"sacramental",kind:"pct",match:/l[ií]deres/i},
+  {id:"ent",n:"05",name:"Entrevistas de ministración",short:"Entrevistas de ministración",pri:"ministracion",kind:"pct",match:/entrevistas/i},
+  {id:"fam",n:"06",name:"Familias con autosuficiencia",short:"Familias autosuficientes",pri:"ministracion",kind:"self",match:/familias/i},
+  {id:"mis",n:"07",name:"Misioneros en el campo misional",short:"Misioneros",pri:"misiones",kind:"count",match:/^\s*misioneros\s+en/i},
+  {id:"may",n:"08",name:"Misioneros mayores en el campo misional",short:"Misioneros mayores",pri:"misiones",kind:"count",match:/misioneros\s+mayores/i}
+];
+const MES={ene:1,feb:2,mar:3,abr:4,may:5,jun:6,jul:7,ago:8,sep:9,set:9,oct:10,nov:11,dic:12};
+const MES_TXT=["","Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+const SERIES=["#1B365D","#C9A24D","#2F7F8A","#8A5B9C","#B42318","#5B7A2E"];
+const C={navy:"#1B365D",gold:"#C9A24D",sand:"#D9D4C7",ink:"#1F2937",muted:"#6B7280",grid:"#ECE8DF"};
+
+let all=[];      // every month column in the Excel: {key,label,v|null}
+let filled=[];   // months with data
+let current=null, charts=[];
+
+const $=id=>document.getElementById(id);
+function el(tag,attrs,kids){const e=document.createElement(tag);if(attrs)for(const k in attrs){if(k==="text")e.textContent=attrs[k];else if(k==="class")e.className=attrs[k];else e.setAttribute(k,attrs[k]);}(kids||[]).forEach(c=>c&&e.appendChild(typeof c==="string"?document.createTextNode(c):c));return e;}
+const nf1=new Intl.NumberFormat("es-ES",{minimumFractionDigits:1,maximumFractionDigits:1});
+const nf0=new Intl.NumberFormat("es-ES",{maximumFractionDigits:0,useGrouping:true});
+const fmtInt=n=>nf0.format(n);
+
+/* ---------- metrics ---------- */
+function metric(m,ind){
+  const d=m&&m.v&&m.v[ind.id]; if(!d) return null;
+  if(ind.kind==="count") return isFinite(d.n)?{val:d.n,real:d.n}:null;
+  if(ind.kind==="self"){ if(!isFinite(d.p)||!isFinite(d.h)||d.p<=0) return null; const r=d.p-d.h; return {val:r/d.p*100,real:r,pot:d.p,help:d.h}; }
+  if(!isFinite(d.p)||!isFinite(d.r)||d.p<=0) return null;
+  return {val:d.r/d.p*100,real:d.r,pot:d.p,over:d.r>d.p};
+}
+const fmtVal=(ind,x)=>x==null?"–":ind.kind==="count"?fmtInt(x):nf1.format(x)+" %";
+function fmtDelta(ind,d){const c=deltaClass(d,ind);const s=c==="flat"?"±":d>0?"+":"−";if(c==="flat")d=0;const a=Math.abs(d);return ind.kind==="count"?s+fmtInt(a):s+nf1.format(a)+" pp";}
+function deltaClass(d,ind){const e=ind.kind==="count"?0.5:0.05;return d>e?"up":d<-e?"down":"flat";}
+const arrow=c=>c==="up"?"▲":c==="down"?"▼":"■";
+function prevFilled(key){const i=filled.findIndex(m=>m.key===key);return i>0?filled[i-1]:null;}
+
+/* ---------- routing ---------- */
+function setView(k){current=k;try{history.replaceState(null,"","#"+(k==="cmp"?"comparativa":"m-"+k));}catch(e){}render();}
+function fromHash(){const h=(location.hash||"").slice(1);if(h==="comparativa")return"cmp";if(h.startsWith("m-"))return h.slice(2);return null;}
+window.addEventListener("hashchange",()=>{const k=fromHash();if(k&&k!==current){current=k;render();}});
+
+/* ---------- render ---------- */
+function render(){
+  charts.forEach(c=>c.destroy());charts=[];
+  const view=$("view");view.textContent="";
+  if(!filled.length){view.appendChild(el("div",{class:"empty",text:"El Excel todavía no tiene ningún mes con datos."}));renderTabs();return;}
+  if(!current||(current!=="cmp"&&!filled.find(m=>m.key===current)))current=filled[filled.length-1].key;
+  renderTabs();
+  const latest=filled[filled.length-1];
+  $("subtitle").textContent=current==="cmp"?("Comparativa · "+filled[0].label+" – "+latest.label):("Informe mensual · "+filled.find(m=>m.key===current).label);
+  if(current==="cmp")renderCompare(view);else renderMonth(view,current);
+}
+function renderTabs(){
+  const t=$("tabs");t.textContent="";
+  all.forEach(m=>{
+    const has=!!filled.find(f=>f.key===m.key);
+    const b=el("button",{class:"tab",type:"button",role:"tab",id:"tab-"+m.key,"aria-selected":String(current===m.key)},[m.label]);
+    if(!has){b.disabled=true;b.appendChild(el("small",{text:"pendiente"}));}
+    else b.addEventListener("click",()=>setView(m.key));
+    t.appendChild(b);
+  });
+  if(filled.length){const c=el("button",{class:"tab cmp",type:"button",role:"tab",id:"tab-cmp","aria-selected":String(current==="cmp"),text:"Comparativa"});c.addEventListener("click",()=>setView("cmp"));t.appendChild(c);}
+  const sel=t.querySelector('[aria-selected="true"]');if(sel&&sel.scrollIntoView)try{sel.scrollIntoView({block:"nearest",inline:"nearest"});}catch(e){}
+}
+function iconSvg(name){const span=el("span");span.innerHTML=ICONS[name]||"";const s=span.querySelector("svg");if(s){s.setAttribute("aria-hidden","true");s.setAttribute("focusable","false");}return s||span;}
+function prioHead(p){const h=el("div",{class:"prio-head"});h.appendChild(iconSvg(p.icon));h.appendChild(el("h2",{text:p.name}));return h;}
+
+function donut(val){
+  const ns="http://www.w3.org/2000/svg",R=44,CIR=2*Math.PI*R,v=Math.max(0,Math.min(100,val));
+  const s=document.createElementNS(ns,"svg");s.setAttribute("viewBox","0 0 112 112");s.setAttribute("class","donut");s.setAttribute("role","img");s.setAttribute("aria-label",nf1.format(val)+" %");
+  const bg=document.createElementNS(ns,"circle");bg.setAttribute("cx","56");bg.setAttribute("cy","56");bg.setAttribute("r",R);bg.setAttribute("fill","none");bg.setAttribute("stroke",C.sand);bg.setAttribute("stroke-width","16");s.appendChild(bg);
+  const fg=document.createElementNS(ns,"circle");fg.setAttribute("cx","56");fg.setAttribute("cy","56");fg.setAttribute("r",R);fg.setAttribute("fill","none");fg.setAttribute("stroke",C.navy);fg.setAttribute("stroke-width","16");
+  fg.setAttribute("stroke-dasharray",(CIR*v/100).toFixed(2)+" "+CIR.toFixed(2));fg.setAttribute("transform","rotate(-90 56 56)");s.appendChild(fg);
+  const tx=document.createElementNS(ns,"text");tx.setAttribute("x","56");tx.setAttribute("y","62");tx.setAttribute("text-anchor","middle");tx.setAttribute("font-family","Georgia, serif");tx.setAttribute("font-weight","700");tx.setAttribute("font-size","20");tx.setAttribute("fill",C.navy);
+  tx.textContent=(val<10&&val>0?nf1.format(val):nf0.format(Math.round(val)))+" %";s.appendChild(tx);
+  return s;
+}
+
+function baseOpts(extra){
+  const o={responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:"index",intersect:false},
+    plugins:{legend:{display:false},tooltip:{backgroundColor:C.navy,titleColor:"#fff",bodyColor:"#fff",padding:8}},
+    scales:{x:{grid:{display:false},ticks:{color:C.muted,font:{size:11}},border:{color:C.sand}},y:{grid:{color:C.grid},ticks:{color:C.muted,font:{size:11}},border:{display:false}}}};
+  return deepMerge(o,extra||{});
+}
+function deepMerge(a,b){for(const k in b){if(b[k]&&typeof b[k]==="object"&&!Array.isArray(b[k])&&typeof b[k]!=="function")a[k]=deepMerge(a[k]||{},b[k]);else a[k]=b[k];}return a;}
+const valueLabels={id:"valueLabels",afterDatasetsDraw(chart){const ctx=chart.ctx;chart.data.datasets.forEach((ds,i)=>{if(ds.type==="line"||ds.noLabels)return;const meta=chart.getDatasetMeta(i);meta.data.forEach((bar,j)=>{const v=ds.data[j];if(v==null)return;ctx.save();ctx.fillStyle=C.navy;ctx.font="700 11px Calibri, Carlito, Arial";ctx.textAlign="center";ctx.fillText(ds.fmt?ds.fmt(v):v,bar.x,bar.y-5);ctx.restore();});});}};
+
+function monthBars(canvas,ind,months,activeKey,height){
+  const isPct=ind.kind!=="count";
+  const vals=months.map(m=>{const x=metric(m,ind);return x?+x.val.toFixed(isPct?1:0):null;});
+  const bg=months.map(m=>m.key===activeKey?C.navy:C.sand);
+  const max=isPct?100:Math.max(4,Math.ceil(Math.max(...vals.filter(v=>v!=null))*1.15));
+  return new Chart(canvas,{type:"bar",data:{labels:months.map(m=>m.label),datasets:[{type:"bar",data:vals,backgroundColor:bg,borderRadius:2,maxBarThickness:52,fmt:v=>isPct?nf0.format(Math.round(v))+" %":fmtInt(v)}]},
+    options:baseOpts({layout:{padding:{top:16}},scales:{y:isPct?{min:0,max:100,ticks:{stepSize:25,callback:v=>v+" %"}}:{min:0,max,ticks:{precision:0}}},
+      plugins:{tooltip:{callbacks:{label:cx=>{const x=metric(months[cx.dataIndex],ind);if(!x)return"Sin datos";return isPct?(nf1.format(x.val)+" % · "+fmtInt(x.real)+" de "+fmtInt(x.pot)):(fmtInt(x.val)+" misioneros");}}}}}),plugins:[valueLabels]});
+}
+
+function renderMonth(view,key){
+  const m=filled.find(x=>x.key===key),prev=prevFilled(key);
+  const upto=filled.slice(0,filled.indexOf(m)+1);
+  let up=0,down=0,flat=0;const alerts=[];
+  IND.forEach(ind=>{const a=metric(m,ind),b=metric(prev,ind);if(a&&b){const d=a.val-b.val,c=deltaClass(d,ind);c==="up"?up++:c==="down"?down++:flat++;if(ind.kind!=="count"&&d<=-5)alerts.push(ind.short+" "+fmtDelta(ind,d));}if(a&&a.over)alerts.push(ind.short+": el real supera al potencial");});
+  const sum=el("section",{class:"summary",id:"resumen"});
+  sum.appendChild(el("strong",{text:"Resumen de "+m.label}));
+  if(prev){sum.appendChild(el("span",{class:"muted",text:"frente a "+prev.label+":"}));
+    sum.appendChild(el("span",{class:"chip up",text:"▲ "+up+(up===1?" mejora":" mejoran")}));sum.appendChild(el("span",{class:"chip down",text:"▼ "+down+(down===1?" empeora":" empeoran")}));sum.appendChild(el("span",{class:"chip flat",text:"■ "+flat+" sin cambio"}));}
+  else sum.appendChild(el("span",{class:"muted",text:"Primer mes de captura: sin comparación con el mes anterior."}));
+  alerts.forEach(a=>sum.appendChild(el("span",{class:"chip warn",text:"Atención: "+a})));
+  view.appendChild(sum);
+
+  const grid=el("div",{class:"prio-grid"});
+  PRIOS.forEach(p=>{
+    const sec=el("section",{class:"prio",id:"prioridad-"+p.id});sec.appendChild(prioHead(p));
+    IND.filter(i=>i.pri===p.id).forEach(ind=>{
+      const a=metric(m,ind),b=metric(prev,ind);
+      const card=el("article",{class:"ind",id:"ind-"+ind.id});
+      card.appendChild(el("span",{class:"ind-num",text:ind.n}));
+      card.appendChild(el("h3",{text:ind.name}));
+      const body=el("div",{class:"ind-body"});const kpi=el("div",{class:"kpi"});
+      if(a){
+        if(ind.kind==="count"){kpi.appendChild(el("span",{class:"count",text:fmtInt(a.val)}));kpi.appendChild(el("span",{class:"detail",text:"en el campo actualmente"}));}
+        else{kpi.appendChild(donut(a.val));kpi.appendChild(el("span",{class:"detail",text: ind.kind==="self"?(fmtInt(a.real)+" de "+fmtInt(a.pot)+" familias"):(fmtInt(a.real)+" de "+fmtInt(a.pot))}));}
+        if(b){const d=a.val-b.val,c=deltaClass(d,ind);kpi.appendChild(el("span",{class:"chip "+c,title:"Frente a "+prev.label,text:arrow(c)+" "+(c==="flat"&&ind.kind==="count"?"sin cambio":fmtDelta(ind,d))}));if(c==="down"&&ind.kind!=="count"&&d<=-5)card.classList.add("alert");}
+        if(a.over){card.classList.add("alert");kpi.appendChild(el("span",{class:"chip warn",text:"Real > potencial"}));}
+      } else kpi.appendChild(el("span",{class:"detail",text:"Sin datos este mes"}));
+      body.appendChild(kpi);
+      const box=el("div",{class:"chart-box"});box.style.height="170px";const cv=el("canvas",{role:"img","aria-label":"Evolución mensual de "+ind.name});box.appendChild(cv);body.appendChild(box);
+      card.appendChild(body);sec.appendChild(card);
+      charts.push(monthBars(cv,ind,upto,m.key));
+    });
+    grid.appendChild(sec);
+  });
+  view.appendChild(grid);
+
+  const pctInd=IND.filter(i=>i.kind!=="count");
+  const panel=el("section",{class:"panel",id:"panorama"});
+  panel.appendChild(el("h2",{text:"Panorama del mes: % por indicador"+(prev?" · "+prev.label+" vs "+m.label:"")}));
+  const box=el("div",{class:"chart-box"});box.style.height="300px";const cv=el("canvas",{role:"img","aria-label":"Porcentaje por indicador"});box.appendChild(cv);panel.appendChild(box);view.appendChild(panel);
+  const ds=[];
+  if(prev)ds.push({label:prev.label,data:pctInd.map(i=>{const x=metric(prev,i);return x?+x.val.toFixed(1):null;}),backgroundColor:C.sand,borderRadius:2,fmt:v=>nf0.format(Math.round(v))+" %"});
+  ds.push({label:m.label,data:pctInd.map(i=>{const x=metric(m,i);return x?+x.val.toFixed(1):null;}),backgroundColor:C.navy,borderRadius:2,fmt:v=>nf0.format(Math.round(v))+" %"});
+  charts.push(new Chart(cv,{type:"bar",data:{labels:pctInd.map(i=>i.short),datasets:ds},options:baseOpts({layout:{padding:{top:16}},scales:{y:{min:0,max:100,ticks:{stepSize:25,callback:v=>v+" %"}},x:{ticks:{autoSkip:false,maxRotation:0,callback:function(v){const l=this.getLabelForValue(v);if(l.length<=14)return l;const w=l.split(" "),h=Math.ceil(w.length/2);return [w.slice(0,h).join(" "),w.slice(h).join(" ")];}}}},plugins:{legend:{display:!!prev,position:"bottom",labels:{color:C.ink,boxWidth:12,boxHeight:12}},tooltip:{callbacks:{label:c=>c.dataset.label+": "+nf1.format(c.parsed.y)+" %"}}}}),plugins:[valueLabels]}));
+}
+
+function renderCompare(view){
+  const labels=filled.map(m=>m.label);
+  const tp=el("section",{class:"panel",id:"tabla-comparativa"});
+  tp.appendChild(el("h2",{text:"Comparativa mensual"}));
+  const wrap=el("div",{class:"tbl-wrap"}),t=el("table");
+  const hr=el("tr",null,[el("th",{text:"Indicador"})]);all.forEach(m=>hr.appendChild(el("th",{text:m.label})));hr.appendChild(el("th",{text:"Var. desde "+labels[0]}));
+  t.appendChild(el("thead",null,[hr]));const tb=el("tbody");
+  IND.forEach(ind=>{
+    const r=el("tr",null,[el("td",{text:ind.n+" · "+ind.name})]);
+    all.forEach(m=>{const x=metric(m,ind);r.appendChild(el("td",{class:x?"":"na",text:x?fmtVal(ind,x.val):"–"}));});
+    const vals=filled.map(m=>{const x=metric(m,ind);return x?x.val:null;}).filter(v=>v!=null);
+    const td=el("td");if(vals.length>1){const d=vals[vals.length-1]-vals[0],c=deltaClass(d,ind);td.appendChild(el("span",{class:"chip "+c,text:arrow(c)+" "+fmtDelta(ind,d)}));}else td.textContent="–";
+    r.appendChild(td);tb.appendChild(r);
+  });
+  t.appendChild(tb);wrap.appendChild(t);tp.appendChild(wrap);view.appendChild(tp);
+
+  const pctInd=IND.filter(i=>i.kind!=="count");
+  const op=el("section",{class:"panel",id:"tendencia-general"});
+  op.appendChild(el("h2",{text:"Tendencia del % · todos los indicadores"}));
+  const ob=el("div",{class:"chart-box"});ob.style.height="320px";const oc=el("canvas",{role:"img","aria-label":"Tendencia del porcentaje de todos los indicadores"});ob.appendChild(oc);op.appendChild(ob);view.appendChild(op);
+  charts.push(new Chart(oc,{type:"line",data:{labels:all.map(m=>m.label),datasets:pctInd.map((ind,k)=>({label:ind.short,data:all.map(m=>{const x=metric(m,ind);return x?+x.val.toFixed(1):null;}),borderColor:SERIES[k],backgroundColor:SERIES[k],borderWidth:2.5,tension:.25,pointRadius:4,spanGaps:false}))},
+    options:baseOpts({scales:{y:{min:0,max:100,ticks:{stepSize:25,callback:v=>v+" %"}},x:{grid:{display:false}}},plugins:{legend:{display:true,position:"bottom",labels:{color:C.ink,boxWidth:12,boxHeight:12}},tooltip:{callbacks:{label:c=>c.parsed.y==null?null:c.dataset.label+": "+nf1.format(c.parsed.y)+" %"}}}})}));
+
+  const grid=el("div",{class:"prio-grid",id:"evolucion"});
+  PRIOS.forEach(p=>{
+    const sec=el("section",{class:"prio",id:"evol-"+p.id});sec.appendChild(prioHead(p));
+    IND.filter(i=>i.pri===p.id).forEach(ind=>{
+      const card=el("article",{class:"panel",id:"evol-"+ind.id});
+      const vals=filled.map(m=>{const x=metric(m,ind);return x?x.val:null;}).filter(v=>v!=null);
+      const head=el("div",{style:"display:flex;justify-content:space-between;gap:8px;align-items:flex-start;flex-wrap:wrap"});
+      head.appendChild(el("h2",{text:ind.n+" · "+ind.name}));
+      if(vals.length>1){const d=vals[vals.length-1]-vals[0],c=deltaClass(d,ind);head.appendChild(el("span",{class:"chip "+c,title:"Desde "+labels[0],text:arrow(c)+" "+fmtDelta(ind,d)}));}
+      card.appendChild(head);
+      const b=el("div",{class:"chart-box"});b.style.height="200px";const c=el("canvas",{role:"img","aria-label":"Evolución de "+ind.name});b.appendChild(c);card.appendChild(b);sec.appendChild(card);
+      const isPct=ind.kind!=="count";
+      const series=all.map(m=>{const x=metric(m,ind);return x?+x.val.toFixed(isPct?1:0):null;});
+      const last=filled[filled.length-1].key;
+      const max=isPct?100:Math.max(4,Math.ceil(Math.max(...series.filter(v=>v!=null))*1.15));
+      charts.push(new Chart(c,{data:{labels:all.map(m=>m.label),datasets:[
+        {type:"line",label:"Tendencia",data:series,borderColor:C.gold,backgroundColor:C.gold,borderWidth:2.5,pointRadius:3,tension:.25,spanGaps:false,order:0},
+        {type:"bar",label:isPct?"% real":"Número",data:series,backgroundColor:all.map(m=>m.key===last?C.navy:C.sand),borderRadius:2,maxBarThickness:40,order:1,fmt:v=>isPct?nf0.format(Math.round(v))+" %":fmtInt(v)}
+      ]},options:baseOpts({layout:{padding:{top:16}},scales:{y:isPct?{min:0,max:100,ticks:{stepSize:25,callback:v=>v+" %"}}:{min:0,max,ticks:{precision:0}},x:{ticks:{maxRotation:0,autoSkip:true}}},
+        plugins:{tooltip:{filter:it=>it.dataset.type==="bar",callbacks:{label:cx=>{const x=metric(all[cx.dataIndex],ind);if(!x)return"Pendiente";return isPct?(nf1.format(x.val)+" % · "+fmtInt(x.real)+" de "+fmtInt(x.pot)):(fmtInt(x.val)+" misioneros");}}}}}),plugins:[valueLabels]}));
+    });
+    grid.appendChild(sec);
+  });
+  view.appendChild(grid);
+}
+
+/* ---------- Excel ---------- */
+function monthKey(h){
+  if(h==null)return null;
+  if(h instanceof Date&&!isNaN(h)){const y=h.getFullYear(),mo=h.getMonth()+1;return{key:y+"-"+String(mo).padStart(2,"0"),label:MES_TXT[mo]+" "+y};}
+  const s=String(h).trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+  const mt=s.match(/^([a-z]{3})[a-z]*\.?\s*[-/ ]?\s*(\d{4})$/);if(!mt)return null;
+  const mo=MES[mt[1]];if(!mo)return null;const y=+mt[2];
+  return{key:y+"-"+String(mo).padStart(2,"0"),label:MES_TXT[mo]+" "+y};
+}
+function num(v){if(typeof v==="number"&&isFinite(v))return v;if(typeof v==="string"&&v.trim()!==""&&!isNaN(+v.replace(",",".")))return +v.replace(",",".");return null;}
+function parseWorkbook(buf){
+  const wb=XLSX.read(buf,{type:"array",cellDates:true});
+  const sn=wb.SheetNames.find(n=>/captura/i.test(n));if(!sn)throw new Error("No se encuentra la hoja «Captura» en el Excel.");
+  const rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,raw:true,defval:null});
+  let hr=-1,cols=[];
+  for(let r=0;r<Math.min(rows.length,20);r++){const f=[];(rows[r]||[]).forEach((v,c)=>{const k=monthKey(v);if(k)f.push({c,...k});});if(f.length>=2){hr=r;cols=f;break;}}
+  if(hr<0)throw new Error("No se encuentra la fila de meses (p. ej. «Sep 2026») en la hoja «Captura».");
+  const rowOf={};
+  for(let r=hr+1;r<rows.length;r++){const name=String((rows[r]||[])[1]||"").trim();if(!name)continue;for(const ind of IND){if(rowOf[ind.id]==null&&ind.match.test(name)){if(ind.id==="mis"&&/mayores/i.test(name))continue;rowOf[ind.id]=r;break;}}}
+  const missing=IND.filter(i=>rowOf[i.id]==null).map(i=>i.name);
+  if(missing.length)throw new Error("Faltan estos indicadores en «Captura»: "+missing.join(", ")+".");
+  return cols.map(col=>{
+    const v={};let any=false;
+    IND.forEach(ind=>{const r=rowOf[ind.id];const a=num((rows[r]||[])[col.c]),b=num((rows[r+1]||[])[col.c]);
+      if(ind.kind==="count"){if(a!=null){v[ind.id]={n:a};any=true;}}
+      else if(ind.kind==="self"){if(a!=null&&b!=null){v[ind.id]={p:a,h:b};any=true;}}
+      else if(a!=null&&b!=null){v[ind.id]={p:a,r:b};any=true;}});
+    return{key:col.key,label:col.label,v:any?v:null};
+  }).sort((a,b)=>a.key<b.key?-1:1);
+}
+function load(buf,when){
+  all=parseWorkbook(buf);filled=all.filter(m=>m.v);
+  if(when){const d=new Date(when);if(!isNaN(d))$("stamp").textContent="Datos actualizados el "+d.toLocaleDateString("es-ES",{day:"numeric",month:"long",year:"numeric"});}
+  current=fromHash();render();
+}
+function showError(msg,offerLocal){
+  const v=$("view");v.textContent="";const box=el("div",{class:"empty"});box.appendChild(el("p",{text:msg,style:"margin:0"}));
+  if(offerLocal){const inp=el("input",{type:"file",id:"local-file",accept:".xlsx,.xlsm",hidden:""});const b=el("button",{class:"btn",type:"button",text:"Abrir un Excel para previsualizar"});
+    b.addEventListener("click",()=>inp.click());inp.addEventListener("change",()=>{const f=inp.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{load(new Uint8Array(rd.result),f.lastModified);}catch(e){showError(e.message,true);}};rd.readAsArrayBuffer(f);});
+    box.appendChild(b);box.appendChild(inp);}
+  v.appendChild(box);
+}
+(async function init(){
+  if(typeof XLSX==="undefined"||typeof Chart==="undefined"){showError("No se han podido cargar los componentes del dashboard. Comprueba la conexión a internet y recarga la página.",false);return;}
+  try{
+    const res=await fetch(DATA_FILE+"?v="+Date.now(),{cache:"no-store"});
+    if(!res.ok)throw new Error("http");
+    const buf=new Uint8Array(await res.arrayBuffer());
+    load(buf,res.headers.get("Last-Modified"));
+  }catch(e){
+    if(e&&e.message&&e.message!=="http"&&!(e instanceof TypeError)){showError(e.message,false);return;}
+    showError("No se ha encontrado el archivo «"+DATA_FILE+"» junto a esta página.",true);
+  }
+})();
+let rt;window.addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(()=>{if(filled.length)render();},250);});
+})();
+</script>
+</body>
+</html>
