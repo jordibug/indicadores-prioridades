@@ -1,13 +1,13 @@
 Dashboard · Indicadores de las Prioridades del Área
 
-Contenido de la carpeta
+Contenido
 - index.html : el dashboard (no hace falta tocarlo).
-- datos.xlsx : el Excel de indicadores que lee el dashboard.
+- Indicadores_Prioridades.xlsx : el Excel de indicadores que lee el dashboard.
 
 Actualización mensual
 1. Rellena el nuevo mes en la hoja «Captura» del Excel, como siempre.
-2. Guarda el archivo con el nombre exacto: datos.xlsx
-3. Sustituye el datos.xlsx del alojamiento web por el nuevo.
-4. Listo: al abrir el enlace, el dashboard muestra el nuevo mes (puede tardar unos minutos por la caché del alojamiento).
+2. Guarda el archivo con el nombre: Indicadores_Prioridades.xlsx
+3. En GitHub: Add file → Upload files → arrastra el Excel → Commit changes (sustituye al anterior).
+4. En 1–2 minutos el enlace muestra el nuevo mes.
 
 No cambies el nombre de la hoja «Captura», la fila de meses ni los nombres de los indicadores de la columna B.
