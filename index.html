@@ -171,7 +171,7 @@ function renderTabs(){
     t.appendChild(b);
   });
   if(filled.length){const c=el("button",{class:"tab cmp",type:"button",role:"tab",id:"tab-cmp","aria-selected":String(current==="cmp"),text:"Comparativa"});c.addEventListener("click",()=>setView("cmp"));t.appendChild(c);}
-  const sel=t.querySelector('[aria-selected="true"]');if(sel&&sel.scrollIntoView)try{sel.scrollIntoView({block:"nearest",inline:"nearest"});}catch(e){}
+  const sel=t.querySelector('[aria-selected="true"]');if(sel){const l=sel.offsetLeft,r=l+sel.offsetWidth;if(l<t.scrollLeft||r>t.scrollLeft+t.clientWidth)t.scrollLeft=Math.max(0,l-16);}
 }
 function iconSvg(name){const span=el("span");span.innerHTML=ICONS[name]||"";const s=span.querySelector("svg");if(s){s.setAttribute("aria-hidden","true");s.setAttribute("focusable","false");}return s||span;}
 function prioHead(p){const h=el("div",{class:"prio-head"});h.appendChild(iconSvg(p.icon));h.appendChild(el("h2",{text:p.name}));return h;}
@@ -356,7 +356,6 @@ function showError(msg,offerLocal){
   }
   showError("No se ha encontrado el Excel «"+DATA_FILES[0]+"» junto a esta página.",true);
 })();
-let rt;window.addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(()=>{if(filled.length)render();},250);});
 })();
 </script>
 </body>
